@@ -1,18 +1,12 @@
-Promise = require 'bluebird'
+bluebird = require 'bluebird'
 pg = require 'pg'
-uuid = require 'uuid'
 fs = require 'fs'
 
-#Promise.promisifyAll pg.Client.prototype
-Promise.promisifyAll pg.Client
-#Promise.promisifyAll pg.Connection.prototype
-Promise.promisifyAll pg.Connection
-#Promise.promisifyAll pg.Query.prototype
-Promise.promisifyAll pg.Query
-Promise.promisifyAll pg
-Promise.promisifyAll fs
-
-Promise.promisifyAll(fs)
+bluebird.promisifyAll pg.Client
+bluebird.promisifyAll pg.Connection
+bluebird.promisifyAll pg.Query
+bluebird.promisifyAll pg
+bluebird.promisifyAll fs
 
 class eventStore
 	constructor: (connStr)-> @connStr = connStr
@@ -22,6 +16,21 @@ class eventStore
 		.then (data) -> data.toString()
 		.then (sql) =>
 			pg.connectAsync @connStr
-			.spread (client, release) -> client.queryAsync sql
+			.spread (client, release) ->
+				client.queryAsync sql
+				.finally -> release()
+
+	writeEvents: (aggregateId, aggregateType, originatingVersion, events) =>
+		pg.connectAsync @connStr
+		.spread (client, release) ->
+			client.queryAsync 'select writeEvents($1::uuid, $2::varchar(256), $3::int, $4::json[])', [aggregateId, aggregateType, originatingVersion, events]
+			.finally -> release()
+
+	readEvents: (aggregateId) =>
+		pg.connectAsync @connStr
+		.spread (client, release) ->
+			client.queryAsync 'select data from events where aggregateId = $1::uuid order by version;', [aggregateId]
+			.then (result) -> result.rows
+			.finally -> release()
 
 module.exports = eventStore
