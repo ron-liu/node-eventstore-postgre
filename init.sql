@@ -31,8 +31,8 @@ begin
 	foreach event in array _events
 	loop
 		currentVersion := currentVersion + 1;
-		insert into test values('1');
 		insert into events(aggregateId, data, version) values(_aggregateId, event, currentVersion);
 	end loop;
+	update aggregates set version = currentVersion where aggregateId = _aggregateId;
 end;
 $$ language plpgsql;

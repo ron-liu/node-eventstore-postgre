@@ -17,8 +17,12 @@ describe 'write/read events', ->
 			{eventName: 'customerActivated', data: name: 'added', createdOn: new Date()}
 		]
 		.then -> eventStore.readEvents aggregateId
-		.then (events) ->
-			console.log events.rows
-			expect(events.length).to.equal 2
+		.then (events) -> expect(events.length).to.equal 2
+		.then -> eventStore.writeEvents aggregateId, 'customer', 2, [
+			{eventName: 'customerAdded', data: name: 'added', createdOn: new Date()},
+			{eventName: 'customerActivated', data: name: 'added', createdOn: new Date()}
+		]
+		.then -> eventStore.readEvents aggregateId
+		.then (events) -> expect(events.length).to.equal 4
 		.then -> done()
 		.catch (err) -> done(err.message)
