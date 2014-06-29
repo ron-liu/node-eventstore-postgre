@@ -9,7 +9,10 @@ bluebird.promisifyAll pg
 bluebird.promisifyAll fs
 
 class eventStore
-	constructor: (connStr)-> @connStr = connStr
+	constructor: (connStr, publish)->
+		@connStr = connStr
+		if not publish? || typeof publish isnt 'function' then throw new Error 'Please pass in publish function as 2nd param'
+		@publish = publish
 
 	init: =>
 		fs.readFileAsync "#{__dirname}/init.sql"
@@ -22,8 +25,9 @@ class eventStore
 
 	writeEvents: (aggregateId, aggregateType, originatingVersion, events) =>
 		pg.connectAsync @connStr
-		.spread (client, release) ->
+		.spread (client, release) =>
 			client.queryAsync 'select writeEvents($1::uuid, $2::varchar(256), $3::int, $4::json[])', [aggregateId, aggregateType, originatingVersion, events]
+			.then => @publish e for e in events
 			.finally -> release()
 
 	readEvents: (aggregateId) =>
