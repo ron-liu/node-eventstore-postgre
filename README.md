@@ -21,7 +21,7 @@ npm install node-eventstore-postgre
 I am using coffeescript to the usages. before everything, do this
 ``` coffeescript
 EventStore = require 'node-eventstore-postgre'
-eventStore = new EventStore 'postgres://ronliu:123456@localhost/test'   #Pass in postgre connection string
+eventStore = new EventStore 'postgres://ronliu:123456@localhost/test', publish   #Pass in postgre connection string and publish method
 eventStore.init()   #Initialise necessary tables and functions using create if not exists style
 ```
 ### Get events from a given aggregate id
