@@ -34,7 +34,7 @@ class eventStore
 		pg.connectAsync @connStr
 		.spread (client, release) ->
 			client.queryAsync 'select data from events where aggregateId = $1::uuid order by version;', [aggregateId]
-			.then (result) -> result.rows
+			.then (result) -> row.data for row in result.rows
 			.finally -> release()
 
 module.exports = eventStore

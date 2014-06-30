@@ -20,7 +20,10 @@ describe 'write/read events', ->
 			{eventName: 'customerActivated', data: name: 'added', createdOn: new Date()}
 		]
 		.then -> eventStore.readEvents aggregateId
-		.then (events) -> expect(events.length).to.equal 2
+		.then (events) ->
+			expect(events.length).to.equal 2
+			expect(events[0].eventName).to.not.be.undefined
+
 		.then -> expect(published.length).to.equal 2
 		.then -> eventStore.writeEvents aggregateId, 'customer', 2, [
 			{eventName: 'customerAdded', data: name: 'added', createdOn: new Date()},
