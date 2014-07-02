@@ -24,7 +24,7 @@ begin
 	end if;
 
 	if _originatingVersion != currentVersion then
-		raise 'Concurrency conflicts for version' using hint = 'Please try to write again.';
+		raise 'Concurrency conflicts for versions, database version: %, passing version: %', currentVersion, _originatingVersion  using hint = 'Please try to write again.';
 		rollback;
 	end if;
 
