@@ -27,7 +27,7 @@ class eventStore
 		pg.connectAsync @connStr
 		.spread (client, release) =>
 			client.queryAsync 'select writeEvents($1::uuid, $2::varchar(256), $3::int, $4::json[])', [aggregateId, aggregateType, originatingVersion, events]
-			.then => @publish e for e in events
+			.then => bluebird.Promise.all (@publish e for e in events)
 			.finally -> release()
 
 	readEvents: (aggregateId) =>
@@ -36,5 +36,6 @@ class eventStore
 			client.queryAsync 'select data from events where aggregateId = $1::uuid order by version;', [aggregateId]
 			.then (result) -> row.data for row in result.rows
 			.finally -> release()
+		.then (result) -> result
 
 module.exports = eventStore
