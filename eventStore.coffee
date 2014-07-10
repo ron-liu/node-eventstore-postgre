@@ -1,12 +1,12 @@
-bluebird = require 'bluebird'
+Promise = require 'bluebird'
 pg = require 'pg'
 fs = require 'fs'
 
-bluebird.promisifyAll pg.Client
-bluebird.promisifyAll pg.Connection
-bluebird.promisifyAll pg.Query
-bluebird.promisifyAll pg
-bluebird.promisifyAll fs
+Promise.promisifyAll pg.Client
+Promise.promisifyAll pg.Connection
+Promise.promisifyAll pg.Query
+Promise.promisifyAll pg
+Promise.promisifyAll fs
 
 class eventStore
 	constructor: (connStr, publish)->
@@ -27,7 +27,7 @@ class eventStore
 		pg.connectAsync @connStr
 		.spread (client, release) =>
 			client.queryAsync 'select writeEvents($1::uuid, $2::varchar(256), $3::int, $4::json[])', [aggregateId, aggregateType, originatingVersion, events]
-			.then => bluebird.Promise.all (@publish e for e in events)
+			.then => Promise.all (@publish e for e in events)
 			.finally -> release()
 
 	readEvents: (aggregateId) =>
