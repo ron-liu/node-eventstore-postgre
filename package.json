@@ -1,6 +1,6 @@
 {
   "name": "node-eventstore-postgre",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "nodejs event store using postgre as storage",
   "main": "eventStore.js",
   "scripts": {
@@ -32,6 +32,7 @@
     "uuid": "^1.4.1"
   },
   "devDependencies": {
-    "chai": "^1.9.1"
+    "chai": "^1.9.1",
+    "lodash": "~2.4.1"
   }
 }
