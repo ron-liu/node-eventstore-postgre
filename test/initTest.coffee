@@ -6,7 +6,7 @@ describe 'init', ->
 	eventStore = null
 
 	before (done)->
-		eventStore = new EventStore connStr
+		eventStore = new EventStore connStr, ->
 		pg.connectAsync connStr
 		.spread (client, release) ->
 			client.queryAsync 'drop table if exists events'

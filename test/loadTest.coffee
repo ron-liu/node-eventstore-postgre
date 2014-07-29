@@ -14,7 +14,7 @@ describe 'load test', ->
 
 	before (done)-> eventStore.init().then done()
 
-	it.only 'write 1000 events', (done) ->
+	it 'write 1000 events', (done) ->
 		promises = _.map _.range(1000),->
 			eventStore.writeEvents uuid.v4(), 'customer', 0, [
 				{eventName: 'customerAdded', data: name: 'added', createdOn: new Date()},

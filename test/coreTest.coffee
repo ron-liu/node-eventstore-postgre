@@ -14,7 +14,7 @@ describe 'write/read events', ->
 
 	before (done)-> eventStore.init().then done()
 
-	it.only 'read after writing should work', (done) ->
+	it 'read after writing should work', (done) ->
 		eventStore.writeEvents aggregateId, 'customer', 0, [
 			{eventName: 'customerAdded', data: name: 'added', createdOn: new Date()},
 			{eventName: 'customerActivated', data: name: 'added', createdOn: new Date()}

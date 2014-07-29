@@ -27,15 +27,14 @@ class eventStore
 		pg.connectAsync @connStr
 		.spread (client, release) =>
 			client.queryAsync 'select writeEvents($1::uuid, $2::varchar(256), $3::int, $4::json[])', [aggregateId, aggregateType, originatingVersion, events]
-			.then => Promise.all (@publish e for e in events)
 			.finally -> release()
+		.then => Promise.all (@publish e for e in events)
 
 	readEvents: (aggregateId) =>
 		pg.connectAsync @connStr
 		.spread (client, release) ->
 			client.queryAsync 'select data from events where aggregateId = $1::uuid order by version;', [aggregateId]
-			.then (result) -> row.data for row in result.rows
 			.finally -> release()
-		.then (result) -> result
+		.then (result) -> row.data for row in result.rows
 
 module.exports = eventStore
