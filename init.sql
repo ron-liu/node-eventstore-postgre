@@ -12,6 +12,14 @@ create table if not exists events (
 	createdOn timestamp with time zone default now()
 );
 
+-- Make sure there is no same version event in one aggregate
+DO $$
+BEGIN
+if not exists ( select * from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relname = 'ix_events_aggregateid_version' and n.nspname = 'public') THEN
+	create unique index ix_events_aggregateid_version on events (aggregateId, version);
+end if;
+END$$;
+
 create or replace function writeEvents(_aggregateId uuid, _aggregateType varchar(256), _originatingVersion int, _events json []) returns void as $$
 declare
 	currentVersion int;

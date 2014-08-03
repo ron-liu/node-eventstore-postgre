@@ -4,15 +4,18 @@ uuid = require 'uuid'
 expect = require('chai').expect
 _ = require 'lodash'
 Promise = require 'bluebird'
+tools = require './tools'
 
-connStr = 'postgres://ronliu:123456@localhost/test'
 describe 'load test', ->
 
 	published = []
 	publish = (e) -> published.push e
-	eventStore = new EventStore connStr, publish
+	eventStore = new EventStore tools.connString, publish
 
-	before (done)-> eventStore.init().then done()
+	before (done)->
+		tools.cleanUp()
+		.then -> eventStore.init()
+		.then -> done()
 
 	it 'write 1000 events', (done) ->
 		promises = _.map _.range(1000),->

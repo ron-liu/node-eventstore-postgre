@@ -1,6 +1,6 @@
 {
   "name": "node-eventstore-postgre",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "nodejs event store using postgre as storage",
   "main": "eventStore.js",
   "scripts": {
