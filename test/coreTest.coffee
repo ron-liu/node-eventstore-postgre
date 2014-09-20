@@ -58,5 +58,5 @@ describe 'write/read events', ->
 				expect(events.length).to.equal 1
 				expect(events[0].eventName is 'customerActivated')
 			.then -> done()
-			.then (err) -> done(err)
+			.catch (err) -> done(err)
 
