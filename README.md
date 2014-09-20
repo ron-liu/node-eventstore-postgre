@@ -2,7 +2,7 @@ node-eventstore-postgre
 =======================
 
 ## Why I create this eventstore?
-I firstly checked [Grey Young's event store](http://www.geteventstore.com), but it only provide atom REST interface for node.js, 
+I firstly checked [Greg Young's event store](http://www.geteventstore.com), but it only provide atom REST interface for node.js, 
 which need too many round trips (each event for each round trip) to get events from a given aggregate.
 
 Later I tried to find node.js event store implementations, however, many are using NOSQL databases which I don't think it will support 
@@ -10,7 +10,7 @@ transaction very well.
 
 Finally, I decide write a simple one using rational database. 
 
-Inspired by [Grey Young's cqrs document](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf).
+Inspired by [Greg Young's cqrs document](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf).
 
 ## Install
 ```
