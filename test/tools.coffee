@@ -13,5 +13,5 @@ exports.cleanUp =  =>
 	pg.connectAsync connString
 	.spread (client, release) =>
 		client.queryAsync 'truncate aggregates cascade;'
-		.then -> client.queryAsync 'drop table events; drop table aggregates;'
+		.then -> client.queryAsync 'drop table if exists events; drop table if exists snapshots; drop table if exists aggregates;'
 		.finally -> release()

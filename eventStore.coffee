@@ -23,17 +23,24 @@ class eventStore
 				client.queryAsync sql
 				.finally -> release()
 
-	writeEvents: (aggregateId, aggregateType, originatingVersion, events) =>
+	writeEvents: (aggregateId, aggregateType, originatingVersion, events, aggregateSnapshot) =>
 		pg.connectAsync @connStr
 		.spread (client, release) =>
-			client.queryAsync 'select writeEvents($1::uuid, $2::varchar(256), $3::int, $4::json[])', [aggregateId, aggregateType, originatingVersion, events]
+			client.queryAsync 'select writeEvents($1::uuid, $2::varchar(256), $3::int, $4::json[], $5::json)', [aggregateId, aggregateType, originatingVersion, events, aggregateSnapshot]
 			.finally -> release()
 		.then => Promise.all (@publish e for e in events)
 
-	readEvents: (aggregateId) =>
+	readSnapshot: (aggregateId) =>
 		pg.connectAsync @connStr
 		.spread (client, release) ->
-			client.queryAsync 'select data from events where aggregateId = $1::uuid order by version;', [aggregateId]
+			client.queryAsync 'select data, version from snapshots where aggregateId = $1::uuid order by version;', [aggregateId]
+			.finally -> release()
+		.then (result) -> return result.rows[0] if result.rows.length is 1
+
+	readEvents: (aggregateId, startOverVersion = 0) => # the version to start over, if passing is 3, should read from 4
+		pg.connectAsync @connStr
+		.spread (client, release) ->
+			client.queryAsync 'select data from events where aggregateId = $1::uuid and version > $2::int order by version;', [aggregateId, startOverVersion]
 			.finally -> release()
 		.then (result) -> row.data for row in result.rows
 

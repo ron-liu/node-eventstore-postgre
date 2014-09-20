@@ -25,23 +25,39 @@ eventStore = new EventStore 'postgres://ronliu:123456@localhost/test', publish  
 eventStore.init()   #Initialise necessary tables and functions using create if not exists style
 ```
 ### Get events from a given aggregate id
+It will take 2 arguments:
+
+* aggregateId
+* startOverVersion, like given 3, it should return events from version 4
+ 
 ``` coffeescript
-events = eventStore.readEvents aggregateId  #aggregateId is uuid
+events = eventStore.readEvents aggregateId, statOverVersion
 ```
+
+### Given aggregate id, output a snap shot with version
+
+It will take 2 arguments:
+ 
+* aggregateId
+``` coffeescript
+snapshot = eventStore.readSnapshot aggregateId # {data: aggregate, version: version} or undefined
+```
+
 ### Write events to 
-it will take 4 arguments:
+It will take 4 arguments:
 
 * aggregateId
 * aggregate type
 * originating version: the version when we read used to check optimistic concurrency conflicts
 * events array
+* snapshot
 
 ``` coffeescript
 eventStore.writeEvents aggregateId, 'customer', 2, [
 	{eventName: 'customerAdded', data: name: 'ron', createdOn: new Date()},
 	{eventName: 'customerActivated', data: comment: 'good customer'},
-]
+], name: 'john', isActive: true
 ```
 
 ## Status
-It is in very early stage, and right now just finished two basic APIs. I will evolve this with my other projects which consume this one. 
+* From 0.2, it support snapshot 
